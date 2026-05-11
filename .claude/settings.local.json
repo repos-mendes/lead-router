@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:tanstack.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(gh api *)",
+      "Bash(python -c \"import sys,json; [print\\(x['name']\\) for x in json.load\\(sys.stdin\\)]\")",
+      "WebFetch(domain:registry.npmjs.org)",
+      "WebFetch(domain:unpkg.com)",
+      "Bash(bun install *)",
+      "Bash(bun run *)",
+      "Bash(timeout 8 type \"C:\\\\Users\\\\LUCASM~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-lucasmendes-OneDrive---VCA-Construtora-Documentos-Projetos-lead-flow-pro-main\\\\d39dc115-2d66-44a1-a3b1-23eb71030a96\\\\tasks\\\\bf09goy6n.output\")",
+      "Bash(git *)"
+    ]
+  }
+}
