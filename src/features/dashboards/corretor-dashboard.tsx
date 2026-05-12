@@ -17,9 +17,9 @@ export function CorretorDashboard() {
         action={<Button asChild><Link to="/app/my-leads"><ListChecks className="h-4 w-4 mr-2" />Ver meus leads</Link></Button>}
       />
       <div className="grid gap-4 md:grid-cols-3">
-        <StatCard title="Leads recebidos" value={meus.length} />
-        <StatCard title="Lead Aceito" value={meus.filter((l) => l.status === "em_atendimento").length} />
-        <StatCard title="Contato Feito" value={meus.filter((l) => l.status === "contato_feito").length} />
+        <StatCard title="Aguardando ação" value={meus.filter((l) => l.status === "distribuido" || (l.status === "aguardando" && !!l.corretorId)).length} />
+        <StatCard title="Leads aceitos" value={meus.filter((l) => ["em_atendimento", "contato_feito", "numero_invalido"].includes(l.status)).length} />
+        <StatCard title="Contatos feitos" value={meus.filter((l) => l.status === "contato_feito").length} />
       </div>
       <p className="text-sm text-muted-foreground mt-6">
         Acesse <Link to="/app/my-leads" className="underline">Meus Leads</Link> para iniciar o contato pelo WhatsApp.

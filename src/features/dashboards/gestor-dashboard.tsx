@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Users, UserPlus, Inbox, TrendingUp, Building, Clock, PhoneCall, CalendarDays, ChevronDown } from "lucide-react";
+import { Users, UserPlus, Inbox, TrendingUp, Building, Clock, Check, CalendarDays, ChevronDown } from "lucide-react";
 import { loadLeads, loadEmpreendimentos, loadUsers, type Lead } from "@/lib/mock-data";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import { cn } from "@/lib/utils";
@@ -145,10 +145,10 @@ export function GestorDashboard() {
 
   const leadsFiltrados = filtrarLeads(leads, periodo, range);
 
-  const aguardandoAdm      = leadsFiltrados.filter((l) => l.status === "aguardando").length;
-  const aguardandoCorretor = leadsFiltrados.filter((l) => l.status === "distribuido").length;
-  const emAtendimento      = leadsFiltrados.filter((l) => l.status === "em_atendimento").length;
-  const contatoFeito       = leadsFiltrados.filter((l) => l.status === "contato_feito").length;
+  const aguardandoAdm      = leads.filter((l) => l.status === "aguardando").length;
+  const aguardandoCorretor = leads.filter((l) => l.status === "distribuido").length;
+  const leadsAceitos       = leads.filter((l) => ["em_atendimento", "contato_feito", "numero_invalido"].includes(l.status)).length;
+  const contatoFeito       = leads.filter((l) => l.status === "contato_feito").length;
 
   const leadsPorEmpreendimento = empreendimentosAtivos.map((e) => ({
     nome: e.nome.length > 18 ? e.nome.slice(0, 16) + "…" : e.nome,
@@ -187,11 +187,11 @@ export function GestorDashboard() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 mb-6">
-        <StatCard title="Total de Leads"       value={leadsFiltrados.length} hint={labelFiltro(periodo, range)} icon={<Inbox  className="h-4 w-4 text-muted-foreground" />} />
-        <StatCard title="Aguardando ADM"       value={aguardandoAdm}         icon={<Clock    className="h-4 w-4 text-muted-foreground" />} />
-        <StatCard title="Aguardando Corretor"  value={aguardandoCorretor}    icon={<Users    className="h-4 w-4 text-muted-foreground" />} />
-        <StatCard title="Lead Aceito"          value={emAtendimento}         icon={<PhoneCall className="h-4 w-4 text-muted-foreground" />} />
-        <StatCard title="Contato Feito"        value={contatoFeito}          icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />} />
+        <StatCard title="Total de Leads"      value={leads.length}         icon={<Users      className="h-4 w-4 text-muted-foreground" />} />
+        <StatCard title="Aguardando ADM"      value={aguardandoAdm}        icon={<Clock      className="h-4 w-4 text-muted-foreground" />} />
+        <StatCard title="Aguardando Corretor" value={aguardandoCorretor}   icon={<Clock      className="h-4 w-4 text-muted-foreground" />} />
+        <StatCard title="Lead Aceito"         value={leadsAceitos}         icon={<Check      className="h-4 w-4 text-muted-foreground" />} />
+        <StatCard title="Contato Feito"       value={contatoFeito}         icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />} />
       </div>
 
       <Card className="mb-6">

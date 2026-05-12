@@ -140,7 +140,7 @@ function MyLeads() {
         </div>
 
         {atendimento.length === 0 ? (
-          <p className="text-sm text-muted-foreground pl-1">Nenhum lead em atendimento.</p>
+          <p className="text-sm text-muted-foreground pl-1">Parabéns, você entrou em contato com todos os seus leads!</p>
         ) : (
           <div className="grid gap-3">
             {atendimento.map((l) => (
@@ -159,11 +159,11 @@ function MyLeads() {
                       <Clock className="h-3 w-3" /> {timeAgo(l.criadoEm)}
                     </p>
                   </div>
-                  <div className="flex flex-col gap-2 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0">
                     <Button size="sm" onClick={() => whatsapp(l.telefone)}>
                       <MessageCircle className="h-4 w-4 mr-1" /> WhatsApp
                     </Button>
-                    <Button size="icon" variant="outline" onClick={() => copy(l.telefone)}>
+                    <Button size="sm" variant="outline" onClick={() => copy(l.telefone)}>
                       <Copy className="h-4 w-4" />
                     </Button>
                   </div>
