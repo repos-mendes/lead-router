@@ -15,7 +15,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { cidadeNome, loadLeads, loadUsers, saveLeads, type Lead, type MockUser } from "@/lib/mock-data";
+import { loadLeads, loadUsers, loadEmpreendimentos, saveLeads, type Lead, type MockUser } from "@/lib/mock-data";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/distribution")({
@@ -33,8 +33,13 @@ function Distribution() {
   if (user.role !== "adm" && user.role !== "gestor") return <Navigate to="/app" />;
 
   const isGestor = user.role === "gestor";
-  const cidadeFiltro = isGestor ? undefined : user.cidadeId;
-  const visiveis = cidadeFiltro ? leads.filter((l) => l.cidadeId === cidadeFiltro) : leads;
+
+  const meusEmpNomes = isGestor ? null : (() => {
+    const emps = loadEmpreendimentos();
+    return new Set(emps.filter((e) => user.empreendimentoIds?.includes(e.id)).map((e) => e.nome));
+  })();
+
+  const visiveis = meusEmpNomes ? leads.filter((l) => meusEmpNomes.has(l.empreendimento)) : leads;
 
   const aguardando = visiveis.filter((l) => l.status === "aguardando");
   const comCorretores = visiveis.filter((l) => l.status === "distribuido" || l.status === "em_atendimento");
@@ -44,7 +49,7 @@ function Distribution() {
   const admEmpIds = isGestor ? null : (user.empreendimentoIds ?? []);
   const corretores = allUsers.filter((u) => {
     if (u.role !== "corretor") return false;
-    if (isGestor) return !cidadeFiltro || u.cidadeId === cidadeFiltro;
+    if (isGestor) return true;
     return admEmpIds!.some((id) => u.empreendimentoIds?.includes(id));
   });
   const destinatarioSelecionado = [...adms, ...corretores].find((u) => u.id === destinatarioId);
@@ -57,7 +62,9 @@ function Distribution() {
         ? {
             ...l,
             status: isCorretor ? ("distribuido" as const) : ("aguardando" as const),
+            corretorId: isCorretor ? destinatarioSelecionado.id : undefined,
             corretorNome: isCorretor ? destinatarioSelecionado.nome : undefined,
+            destinatarioId: destinatarioSelecionado.id,
             destinatarioNome: destinatarioSelecionado.nome,
           }
         : l,
@@ -73,7 +80,7 @@ function Distribution() {
     <div>
       <PageHeader
         title="Distribuição de Leads"
-        description={cidadeFiltro ? `Cidade: ${cidadeNome(cidadeFiltro)}` : "Todas as expansões"}
+        description={isGestor ? "Todas as expansões" : "Seus empreendimentos"}
       />
 
       <Tabs defaultValue="aguardando">
@@ -135,7 +142,7 @@ function Distribution() {
               <div className="rounded-md border p-3 space-y-1 bg-muted/40">
                 <p><span className="text-muted-foreground">Lead:</span> <span className="font-medium">{selected.nome}</span></p>
                 <p><span className="text-muted-foreground">Telefone:</span> {selected.telefone}</p>
-                <p><span className="text-muted-foreground">Cidade:</span> {cidadeNome(selected.cidadeId)}</p>
+                <p><span className="text-muted-foreground">Empreendimento:</span> {selected.empreendimento}</p>
                 <p>
                   <span className="text-muted-foreground">Responsável atual:</span>{" "}
                   {selected.destinatarioNome ?? selected.corretorNome ?? "—"}
@@ -150,9 +157,7 @@ function Distribution() {
                         ADMs de Expansão
                       </div>
                       {adms.map((u) => (
-                        <SelectItem key={u.id} value={u.id}>
-                          {u.nome} — {cidadeNome(u.cidadeId)}
-                        </SelectItem>
+                        <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>
                       ))}
                       <SelectSeparator />
                       <div className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
@@ -161,9 +166,7 @@ function Distribution() {
                     </>
                   )}
                   {corretores.map((u) => (
-                    <SelectItem key={u.id} value={u.id}>
-                      {u.nome}{!isGestor ? "" : ` — ${cidadeNome(u.cidadeId)}`}
-                    </SelectItem>
+                    <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -213,7 +216,10 @@ function LeadsTable({
       <TableBody>
         {leads.map((l) => {
           const responsavel = getResponsavel(l);
-          const isAdm = users.find((u) => u.nome === responsavel)?.role === "adm";
+          const responsavelUser = users.find((u) =>
+            u.id === l.destinatarioId || u.id === l.corretorId || u.nome === responsavel
+          );
+          const isAdm = responsavelUser?.role === "adm";
           return (
             <TableRow key={l.id}>
               <TableCell>

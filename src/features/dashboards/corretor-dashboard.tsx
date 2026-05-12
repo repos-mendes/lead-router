@@ -7,7 +7,7 @@ import { loadLeads } from "@/lib/mock-data";
 
 export function CorretorDashboard() {
   const { user } = useAuth();
-  const meus = loadLeads().filter((l) => l.corretorNome === user?.nome);
+  const meus = loadLeads().filter((l) => l.corretorId === user?.id);
 
   return (
     <div>

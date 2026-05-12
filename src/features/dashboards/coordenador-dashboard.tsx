@@ -38,7 +38,7 @@ export function CoordenadorDashboard() {
 
   const leadsPorCorretor = corretores
     .map((c) => {
-      const meus = leadsDosMeusEmp.filter((l) => l.corretorNome === c.nome);
+      const meus = leadsDosMeusEmp.filter((l) => l.corretorId === c.id);
       return {
         nome: c.nome,
         total: meus.length,

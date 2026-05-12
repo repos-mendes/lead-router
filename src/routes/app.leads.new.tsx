@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from "@/components/ui/select";
-import { MOCK_USERS, cidadeNome, loadLeads, saveLeads, loadEmpreendimentos, type Lead } from "@/lib/mock-data";
+import { loadUsers, loadLeads, saveLeads, loadEmpreendimentos, type Lead } from "@/lib/mock-data";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/leads/new")({
@@ -18,10 +18,9 @@ export const Route = createFileRoute("/app/leads/new")({
 function NewLead() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    nome: "", telefone: "", cidadeId: "sp", empreendimento: "", notas: "",
-  });
+  const [form, setForm] = useState({ nome: "", telefone: "", empreendimento: "", notas: "" });
   const [destinatarioId, setDestinatarioId] = useState<string>("");
+
   const todosEmpreendimentos = loadEmpreendimentos().filter((e) => e.status === "ativo");
   const empreendimentos = user?.empreendimentoIds?.length
     ? todosEmpreendimentos.filter((e) => user.empreendimentoIds!.includes(e.id))
@@ -30,17 +29,15 @@ function NewLead() {
   if (!user) return <Navigate to="/login" />;
   if (user.role !== "sdr" && user.role !== "gestor") return <Navigate to="/app" />;
 
-  const adms = MOCK_USERS.filter((u) => u.role === "adm");
-  const corretores = MOCK_USERS.filter((u) => u.role === "corretor");
+  const allUsers = loadUsers();
+  const selectedEmp = todosEmpreendimentos.find((e) => e.nome === form.empreendimento);
+  const adms = allUsers.filter((u) =>
+    u.role === "adm" && (!selectedEmp || (u.empreendimentoIds?.includes(selectedEmp.id) ?? false))
+  );
+  const corretores = allUsers.filter((u) =>
+    u.role === "corretor" && (!selectedEmp || (u.empreendimentoIds?.includes(selectedEmp.id) ?? false))
+  );
   const destinatarioSelecionado = [...adms, ...corretores].find((u) => u.id === destinatarioId);
-
-  const handleDestinatario = (id: string) => {
-    const pessoa = [...adms, ...corretores].find((u) => u.id === id);
-    setDestinatarioId(id);
-    if (pessoa?.cidadeId) {
-      setForm((f) => ({ ...f, cidadeId: pessoa.cidadeId! }));
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,12 +48,13 @@ function NewLead() {
       id: crypto.randomUUID(),
       nome: form.nome,
       telefone: form.telefone,
-      cidadeId: form.cidadeId,
       empreendimento: form.empreendimento,
       notas: form.notas,
       status: isCorretor ? "distribuido" : "aguardando",
       sdrNome: user.nome,
+      corretorId: isCorretor ? destinatarioSelecionado.id : undefined,
       corretorNome: isCorretor ? destinatarioSelecionado.nome : undefined,
+      destinatarioId: destinatarioSelecionado.id,
       destinatarioNome: destinatarioSelecionado.nome,
       criadoEm: new Date().toISOString(),
     };
@@ -87,7 +85,7 @@ function NewLead() {
               </div>
               <div className="space-y-2">
                 <Label>Empreendimento</Label>
-                <Select required value={form.empreendimento} onValueChange={(v) => setForm({ ...form, empreendimento: v })}>
+                <Select required value={form.empreendimento} onValueChange={(v) => { setForm({ ...form, empreendimento: v }); setDestinatarioId(""); }}>
                   <SelectTrigger><SelectValue placeholder="Selecione o empreendimento" /></SelectTrigger>
                   <SelectContent>
                     {empreendimentos.map((e) => (
@@ -100,28 +98,37 @@ function NewLead() {
               </div>
               <div className="space-y-2">
                 <Label>Destinatário</Label>
-                <Select required value={destinatarioId} onValueChange={handleDestinatario}>
+                <Select required value={destinatarioId} onValueChange={setDestinatarioId} disabled={!form.empreendimento}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione corretor ou ADM" />
+                    <SelectValue placeholder={form.empreendimento ? "Selecione corretor ou ADM" : "Selecione o empreendimento primeiro"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <div className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      ADMs de Expansão
-                    </div>
-                    {adms.map((u) => (
-                      <SelectItem key={u.id} value={u.id}>
-                        {u.nome} — {cidadeNome(u.cidadeId)}
-                      </SelectItem>
-                    ))}
-                    <SelectSeparator />
-                    <div className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      Corretores
-                    </div>
-                    {corretores.map((u) => (
-                      <SelectItem key={u.id} value={u.id}>
-                        {u.nome} — {cidadeNome(u.cidadeId)}
-                      </SelectItem>
-                    ))}
+                    {adms.length > 0 && (
+                      <>
+                        <div className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                          ADMs de Expansão
+                        </div>
+                        {adms.map((u) => (
+                          <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>
+                        ))}
+                        {corretores.length > 0 && <SelectSeparator />}
+                      </>
+                    )}
+                    {corretores.length > 0 && (
+                      <>
+                        <div className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                          Corretores
+                        </div>
+                        {corretores.map((u) => (
+                          <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>
+                        ))}
+                      </>
+                    )}
+                    {adms.length === 0 && corretores.length === 0 && (
+                      <div className="px-2 py-3 text-sm text-muted-foreground text-center">
+                        Nenhum usuário vinculado a este empreendimento.
+                      </div>
+                    )}
                   </SelectContent>
                 </Select>
                 {destinatarioSelecionado && (
@@ -139,7 +146,7 @@ function NewLead() {
             </div>
             <div className="flex gap-2 justify-end">
               <Button type="button" variant="outline" onClick={() => navigate({ to: "/app" })}>Cancelar</Button>
-              <Button type="submit" disabled={!destinatarioId}>Salvar lead</Button>
+              <Button type="submit" disabled={!form.nome || !form.telefone || !form.empreendimento || !destinatarioId || !form.notas}>Salvar lead</Button>
             </div>
           </form>
         </CardContent>

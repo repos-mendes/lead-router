@@ -7,7 +7,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { useAuth } from "@/lib/auth";
-import { loadLeads, cidadeNome } from "@/lib/mock-data";
+import { loadLeads } from "@/lib/mock-data";
 import { UserPlus, Inbox, CheckCircle2, Clock } from "lucide-react";
 
 function timeAgo(iso: string) {
@@ -83,8 +83,7 @@ export function SdrDashboard() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Lead</TableHead>
-                    <TableHead className="hidden md:table-cell">Cidade</TableHead>
-                    <TableHead className="hidden lg:table-cell">Empreendimento</TableHead>
+                    <TableHead className="hidden md:table-cell">Empreendimento</TableHead>
                     <TableHead>Destinatário</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Cadastrado</TableHead>
@@ -98,9 +97,6 @@ export function SdrDashboard() {
                         <div className="text-xs text-muted-foreground">{l.telefone}</div>
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
-                        {cidadeNome(l.cidadeId)}
-                      </TableCell>
-                      <TableCell className="hidden lg:table-cell">
                         {l.empreendimento}
                       </TableCell>
                       <TableCell className="text-sm">

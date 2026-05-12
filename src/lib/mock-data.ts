@@ -1,26 +1,3 @@
-export interface Cidade {
-  id: string;
-  nome: string;
-}
-
-export const CIDADES: Cidade[] = [
-  { id: "sp", nome: "São Paulo" },
-  { id: "rj", nome: "Rio de Janeiro" },
-  { id: "bh", nome: "Belo Horizonte" },
-  { id: "cur", nome: "Curitiba" },
-  { id: "poa", nome: "Porto Alegre" },
-  { id: "bsb", nome: "Brasília" },
-  { id: "sal", nome: "Salvador" },
-  { id: "rec", nome: "Recife" },
-  { id: "for", nome: "Fortaleza" },
-  { id: "man", nome: "Manaus" },
-  { id: "goi", nome: "Goiânia" },
-  { id: "cps", nome: "Campinas" },
-  { id: "san", nome: "Santos" },
-  { id: "flor", nome: "Florianópolis" },
-  { id: "vit", nome: "Vitória" },
-];
-
 export type TipoEmpreendimento = "Residencial" | "Comercial" | "Misto";
 
 export interface Empreendimento {
@@ -60,12 +37,13 @@ export interface Lead {
   id: string;
   nome: string;
   telefone: string;
-  cidadeId: string;
   empreendimento: string;
   notas?: string;
   status: LeadStatus;
   sdrNome: string;
+  corretorId?: string;
   corretorNome?: string;
+  destinatarioId?: string;
   destinatarioNome?: string;
   criadoEm: string;
 }
@@ -76,7 +54,6 @@ export interface MockUser {
   email: string;
   senha: string;
   role: "gestor" | "coordenador" | "adm" | "sdr" | "corretor";
-  cidadeId?: string;
   empreendimentoIds?: string[];
 }
 
@@ -103,10 +80,8 @@ export function saveUsers(users: MockUser[]) {
   localStorage.setItem(USER_KEY, JSON.stringify(users));
 }
 
-export const MOCK_USERS: MockUser[] = [];
-
 const STORE_KEY = "leadflow_leads";
-const SEED_VERSION = "v4";
+const SEED_VERSION = "v5";
 const VERSION_KEY = "leadflow_seed_version";
 
 export function loadLeads(): Lead[] {
@@ -126,8 +101,4 @@ export function loadLeads(): Lead[] {
 
 export function saveLeads(leads: Lead[]) {
   localStorage.setItem(STORE_KEY, JSON.stringify(leads));
-}
-
-export function cidadeNome(id?: string) {
-  return CIDADES.find((c) => c.id === id)?.nome ?? "—";
 }
