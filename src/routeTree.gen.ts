@@ -17,7 +17,6 @@ import { Route as AppUsersRouteImport } from './routes/app.users'
 import { Route as AppMyLeadsRouteImport } from './routes/app.my-leads'
 import { Route as AppEmpreendimentosRouteImport } from './routes/app.empreendimentos'
 import { Route as AppDistributionRouteImport } from './routes/app.distribution'
-import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppLeadsNewRouteImport } from './routes/app.leads.new'
 
 const LoginRoute = LoginRouteImport.update({
@@ -60,11 +59,6 @@ const AppDistributionRoute = AppDistributionRouteImport.update({
   path: '/distribution',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppLeadsNewRoute = AppLeadsNewRouteImport.update({
   id: '/leads/new',
   path: '/leads/new',
@@ -75,7 +69,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
-  '/app/analytics': typeof AppAnalyticsRoute
   '/app/distribution': typeof AppDistributionRoute
   '/app/empreendimentos': typeof AppEmpreendimentosRoute
   '/app/my-leads': typeof AppMyLeadsRoute
@@ -86,7 +79,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/app/analytics': typeof AppAnalyticsRoute
   '/app/distribution': typeof AppDistributionRoute
   '/app/empreendimentos': typeof AppEmpreendimentosRoute
   '/app/my-leads': typeof AppMyLeadsRoute
@@ -99,7 +91,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
-  '/app/analytics': typeof AppAnalyticsRoute
   '/app/distribution': typeof AppDistributionRoute
   '/app/empreendimentos': typeof AppEmpreendimentosRoute
   '/app/my-leads': typeof AppMyLeadsRoute
@@ -113,7 +104,6 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
-    | '/app/analytics'
     | '/app/distribution'
     | '/app/empreendimentos'
     | '/app/my-leads'
@@ -124,7 +114,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
-    | '/app/analytics'
     | '/app/distribution'
     | '/app/empreendimentos'
     | '/app/my-leads'
@@ -136,7 +125,6 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
-    | '/app/analytics'
     | '/app/distribution'
     | '/app/empreendimentos'
     | '/app/my-leads'
@@ -209,13 +197,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDistributionRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/analytics': {
-      id: '/app/analytics'
-      path: '/analytics'
-      fullPath: '/app/analytics'
-      preLoaderRoute: typeof AppAnalyticsRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/leads/new': {
       id: '/app/leads/new'
       path: '/leads/new'
@@ -227,7 +208,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
-  AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppDistributionRoute: typeof AppDistributionRoute
   AppEmpreendimentosRoute: typeof AppEmpreendimentosRoute
   AppMyLeadsRoute: typeof AppMyLeadsRoute
@@ -237,7 +217,6 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppAnalyticsRoute: AppAnalyticsRoute,
   AppDistributionRoute: AppDistributionRoute,
   AppEmpreendimentosRoute: AppEmpreendimentosRoute,
   AppMyLeadsRoute: AppMyLeadsRoute,

@@ -7,13 +7,12 @@ export interface AuthUser {
   nome: string;
   email: string;
   role: Role;
-  cidadeId?: string;
   empreendimentoIds?: string[];
 }
 
 interface AuthCtx {
   user: AuthUser | null;
-  login: (email: string, role: Role, cidadeId?: string, nome?: string, empreendimentoIds?: string[]) => void;
+  login: (id: string, email: string, role: Role, nome: string, empreendimentoIds?: string[]) => void;
   logout: () => void;
 }
 
@@ -38,15 +37,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, []);
 
-  const login = (email: string, role: Role, cidadeId?: string, nome?: string, empreendimentoIds?: string[]) => {
-    const u: AuthUser = {
-      id: crypto.randomUUID(),
-      nome: nome ?? email.split("@")[0].replace(/\./g, " "),
-      email,
-      role,
-      cidadeId,
-      empreendimentoIds,
-    };
+  const login = (id: string, email: string, role: Role, nome: string, empreendimentoIds?: string[]) => {
+    const u: AuthUser = { id, nome, email, role, empreendimentoIds };
     localStorage.setItem(KEY, JSON.stringify(u));
     setUser(u);
   };

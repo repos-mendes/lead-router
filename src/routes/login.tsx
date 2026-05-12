@@ -31,12 +31,13 @@ function LoginPage() {
       setErro("E-mail ou senha incorretos.");
       return;
     }
-    login(found.email, found.role, found.cidadeId, found.nome, found.empreendimentoIds);
+    login(found.id, found.email, found.role, found.nome, found.empreendimentoIds);
     navigate({ to: "/app" });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted px-4">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-muted px-4">
+      <div className="flex-1 flex items-center justify-center">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-3">
           <div className="flex items-center gap-2">
@@ -80,6 +81,8 @@ function LoginPage() {
           </form>
         </CardContent>
       </Card>
+      </div>
+      <p className="text-xs text-muted-foreground text-center pb-4">Development by LM</p>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth";
 import { PageHeader, StatusBadge } from "@/components/shared";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { loadLeads, saveLeads, cidadeNome, type Lead, type LeadStatus } from "@/lib/mock-data";
+import { loadLeads, saveLeads, type Lead, type LeadStatus } from "@/lib/mock-data";
 import {
   Copy, MessageCircle, CheckCircle, XCircle,
   ChevronDown, ChevronRight, Clock, AlertCircle,
@@ -31,12 +31,12 @@ function MyLeads() {
   if (user.role !== "corretor") return <Navigate to="/app" />;
 
   const [leads, setLeads] = useState<Lead[]>(() =>
-    loadLeads().filter((l) => l.corretorNome === user.nome)
+    loadLeads().filter((l) => l.corretorId === user.id)
   );
   const [historicoAberto, setHistoricoAberto] = useState(false);
 
   const novos = leads
-    .filter((l) => l.status === "distribuido" || (l.status === "aguardando" && !!l.corretorNome))
+    .filter((l) => l.status === "distribuido" || (l.status === "aguardando" && !!l.corretorId))
     .sort((a, b) => new Date(b.criadoEm).getTime() - new Date(a.criadoEm).getTime());
 
   const atendimento = leads
@@ -50,7 +50,7 @@ function MyLeads() {
   const mudarStatus = (id: string, status: LeadStatus) => {
     const all = loadLeads().map((l) => (l.id === id ? { ...l, status } : l));
     saveLeads(all);
-    setLeads(all.filter((l) => l.corretorNome === user.nome));
+    setLeads(all.filter((l) => l.corretorId === user.id));
   };
 
   const aceitar = (id: string) => {
@@ -108,7 +108,7 @@ function MyLeads() {
                       <span className="font-semibold">{l.nome}</span>
                     </div>
                     <p className="text-sm text-muted-foreground mt-0.5 ml-4">
-                      {l.empreendimento} · {cidadeNome(l.cidadeId)}
+                      {l.empreendimento}
                     </p>
                     <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1 ml-4">
                       <Clock className="h-3 w-3" /> {timeAgo(l.criadoEm)}
@@ -149,7 +149,7 @@ function MyLeads() {
                   <div className="min-w-0">
                     <p className="font-semibold">{l.nome}</p>
                     <p className="text-sm text-muted-foreground">
-                      {l.empreendimento} · {cidadeNome(l.cidadeId)}
+                      {l.empreendimento}
                     </p>
                     <p className="text-sm font-mono mt-1">{l.telefone}</p>
                     {l.notas && (

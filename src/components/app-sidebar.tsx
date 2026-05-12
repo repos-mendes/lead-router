@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, Users, UserPlus, Inbox, ListChecks, BarChart3, LogOut, Building2, BrickWall,
+  LayoutDashboard, Users, UserPlus, Inbox, ListChecks, LogOut, Building2, BrickWall,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -9,13 +9,11 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuth, ROLE_LABEL, type Role } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { cidadeNome } from "@/lib/mock-data";
 
 type Item = { title: string; url: string; icon: typeof Users; roles: Role[] };
 
 const ITEMS: Item[] = [
   { title: "Dashboard", url: "/app", icon: LayoutDashboard, roles: ["gestor", "coordenador", "adm", "sdr", "corretor"] },
-  { title: "Analytics", url: "/app/analytics", icon: BarChart3, roles: ["gestor"] },
   { title: "Usuários", url: "/app/users", icon: Users, roles: ["gestor"] },
   { title: "Empreendimentos", url: "/app/empreendimentos", icon: BrickWall, roles: ["gestor"] },
   { title: "Novo Lead", url: "/app/leads/new", icon: UserPlus, roles: ["gestor", "sdr"] },
@@ -76,9 +74,6 @@ export function AppSidebar() {
           <div className="px-2 py-2">
             <p className="text-sm font-medium truncate">{user.nome}</p>
             <p className="text-xs text-muted-foreground truncate">{ROLE_LABEL[user.role]}</p>
-            {user.cidadeId && (
-              <p className="text-xs text-muted-foreground">{cidadeNome(user.cidadeId)}</p>
-            )}
           </div>
         )}
         <Button variant="ghost" size="sm" onClick={logout} className="justify-start">

@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CIDADES, MOCK_USERS, loadUsers, saveUsers, loadEmpreendimentos, type MockUser } from "@/lib/mock-data";
+import { loadUsers, saveUsers, loadEmpreendimentos, type MockUser } from "@/lib/mock-data";
 import { useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -85,10 +85,12 @@ function UsersPage() {
   const [users, setUsers] = useState<MockUser[]>(() => loadUsers());
   const [open, setOpen] = useState(false);
   const [editUser, setEditUser] = useState<MockUser | null>(null);
+  const [editNome, setEditNome] = useState("");
+  const [editRole, setEditRole] = useState<Role>("sdr");
   const [editEmpIds, setEditEmpIds] = useState<string[]>([]);
   const [deleteUser, setDeleteUser] = useState<MockUser | null>(null);
   const [form, setForm] = useState({
-    nome: "", email: "", senha: "", role: "sdr" as Role, cidadeId: "", empreendimentoIds: [] as string[],
+    nome: "", email: "", senha: "", role: "sdr" as Role, empreendimentoIds: [] as string[],
   });
 
   const empNames: Record<string, string> = Object.fromEntries(
@@ -102,7 +104,6 @@ function UsersPage() {
     setForm((f) => ({
       ...f,
       role,
-      cidadeId: ROLES_COM_EMPREENDIMENTO.includes(role) ? f.cidadeId : "",
       empreendimentoIds: ROLES_COM_EMPREENDIMENTO.includes(role) ? f.empreendimentoIds : [],
     }));
   };
@@ -115,7 +116,6 @@ function UsersPage() {
       email: form.email,
       senha: form.senha,
       role: form.role,
-      cidadeId: form.cidadeId || undefined,
       empreendimentoIds: ROLES_COM_EMPREENDIMENTO.includes(form.role)
         ? form.empreendimentoIds
         : undefined,
@@ -125,11 +125,13 @@ function UsersPage() {
     saveUsers(updated);
     toast.success("Usuário criado.");
     setOpen(false);
-    setForm({ nome: "", email: "", senha: "", role: "sdr", cidadeId: "", empreendimentoIds: [] });
+    setForm({ nome: "", email: "", senha: "", role: "sdr", empreendimentoIds: [] });
   };
 
   const openEdit = (u: MockUser) => {
     setEditUser(u);
+    setEditNome(u.nome);
+    setEditRole(u.role);
     setEditEmpIds(u.empreendimentoIds ?? []);
   };
 
@@ -143,13 +145,20 @@ function UsersPage() {
   };
 
   const saveEdit = () => {
-    if (!editUser) return;
+    if (!editUser || !editNome) return;
     const updated = users.map((u) =>
-      u.id === editUser.id ? { ...u, empreendimentoIds: editEmpIds } : u
+      u.id === editUser.id
+        ? {
+            ...u,
+            nome: editNome,
+            role: editRole,
+            empreendimentoIds: ROLES_COM_EMPREENDIMENTO.includes(editRole) ? editEmpIds : undefined,
+          }
+        : u
     );
     setUsers(updated);
     saveUsers(updated);
-    toast.success("Empreendimentos atualizados.");
+    toast.success("Usuário atualizado.");
     setEditUser(null);
   };
 
@@ -189,17 +198,6 @@ function UsersPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                {(form.role === "adm" || form.role === "corretor") && (
-                  <div className="space-y-2">
-                    <Label>Cidade</Label>
-                    <Select value={form.cidadeId} onValueChange={(v) => setForm({ ...form, cidadeId: v })}>
-                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                      <SelectContent>
-                        {CIDADES.map((c) => (<SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
                 {ROLES_COM_EMPREENDIMENTO.includes(form.role) && (
                   <div className="space-y-2">
                     <Label>Empreendimentos vinculados</Label>
@@ -212,7 +210,7 @@ function UsersPage() {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-                <Button onClick={create}>Criar</Button>
+                <Button onClick={create} disabled={!form.nome || !form.email || !form.senha}>Criar</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -243,11 +241,9 @@ function UsersPage() {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">
-                    {ROLES_COM_EMPREENDIMENTO.includes(u.role) && (
-                      <Button size="icon" variant="ghost" onClick={() => openEdit(u)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    )}
+                    <Button size="icon" variant="ghost" onClick={() => openEdit(u)}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
                     {u.email !== user.email && (
                       <Button size="icon" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteUser(u)}>
                         <Trash2 className="h-4 w-4" />
@@ -281,15 +277,38 @@ function UsersPage() {
       <Dialog open={!!editUser} onOpenChange={(o) => { if (!o) setEditUser(null); }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Empreendimentos — {editUser?.nome}</DialogTitle>
+            <DialogTitle>Editar usuário</DialogTitle>
           </DialogHeader>
-          <div className="space-y-2">
-            <Label>Empreendimentos vinculados</Label>
-            <EmpreendimentosCheckboxes empIds={editEmpIds} onChange={setEditEmpIds} />
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <Label>Nome</Label>
+              <Input value={editNome} onChange={(e) => setEditNome(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Função</Label>
+              <Select value={editRole} onValueChange={(v) => {
+                const r = v as Role;
+                setEditRole(r);
+                if (!ROLES_COM_EMPREENDIMENTO.includes(r)) setEditEmpIds([]);
+              }}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {(Object.keys(ROLE_LABEL) as Role[]).map((r) => (
+                    <SelectItem key={r} value={r}>{ROLE_LABEL[r]}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {ROLES_COM_EMPREENDIMENTO.includes(editRole) && (
+              <div className="space-y-2">
+                <Label>Empreendimentos vinculados</Label>
+                <EmpreendimentosCheckboxes empIds={editEmpIds} onChange={setEditEmpIds} />
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditUser(null)}>Cancelar</Button>
-            <Button onClick={saveEdit}>Salvar</Button>
+            <Button onClick={saveEdit} disabled={!editNome}>Salvar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
