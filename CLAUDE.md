@@ -2,7 +2,7 @@
 
 ## O que é este projeto
 
-CRM de leads imobiliários chamado **LeadFlow**. Gerencia o fluxo de clientes interessados em imóveis, do primeiro contato até a venda, com dashboards diferentes por perfil de usuário.
+CRM de leads imobiliários chamado **LeadRouter**. Gerencia o fluxo de clientes interessados em imóveis, do primeiro contato até a venda, com dashboards diferentes por perfil de usuário.
 
 ## Stack tecnológica
 
@@ -40,7 +40,6 @@ src/
 │   ├── app.leads.new.tsx         # Formulário de novo lead (SDR seleciona destinatário)
 │   ├── app.distribution.tsx      # Distribuição de leads — ADM (seus empreendimentos) e Gestor (tudo)
 │   ├── app.my-leads.tsx          # Fila do corretor: Aguardando ação / Lead Aceito / Histórico
-│   ├── app.analytics.tsx         # Relatórios e gráficos (só Gestor)
 │   ├── app.users.tsx             # Gerenciamento de usuários (só Gestor)
 │   └── app.empreendimentos.tsx   # CRUD de empreendimentos (só Gestor)
 │
@@ -55,6 +54,9 @@ src/
 │   ├── app-sidebar.tsx      # Sidebar de navegação
 │   ├── shared.tsx           # Componentes reutilizáveis (PageHeader, StatCard, StatusBadge)
 │   └── ui/                  # Componentes shadcn/ui (gerados, não editar manualmente)
+│
+├── hooks/
+│   └── use-mobile.tsx       # Hook para detectar viewport mobile
 │
 ├── lib/
 │   ├── auth.tsx             # Context de autenticação (localStorage)
@@ -72,15 +74,14 @@ src/
 
 ## Perfis de usuário (Roles)
 
-| Role | Acesso |
-|---|---|
-| `gestor` | Visão total — todos os leads, gerencia usuários e empreendimentos, reatribui qualquer lead |
-| `coordenador` | Métricas e acompanhamento dos seus empreendimentos (read-only) |
-| `adm` | Recebe leads do SDR e distribui para corretores dos seus empreendimentos |
-| `sdr` | Cadastra novos leads e escolhe o destinatário (corretor ou ADM) |
-| `corretor` | Aceita leads da sua fila e registra o resultado do contato |
+| Role | Label na UI | Acesso |
+|---|---|---|
+| `gestor` | Gestor | Visão total — todos os leads, gerencia usuários e empreendimentos, reatribui qualquer lead |
+| `coordenador` | Coordenador | Métricas e acompanhamento dos seus empreendimentos (read-only) |
+| `adm` | ADM de Expansão | Recebe leads do SDR e distribui para corretores dos seus empreendimentos |
+| `sdr` | SDR | Cadastra novos leads e escolhe o destinatário (corretor ou ADM) |
+| `corretor` | Corretor | Aceita leads da sua fila e registra o resultado do contato |
 
-- `adm` e `corretor` têm `cidadeId` — vinculados a uma cidade específica
 - `adm`, `corretor` e `coordenador` têm `empreendimentoIds` — vinculados a empreendimentos específicos
 - `gestor` não tem `empreendimentoIds` — vê tudo automaticamente (tratado com flag `semFiltro`)
 
@@ -124,6 +125,7 @@ Definidos em `src/components/shared.tsx` → `StatusBadge`. Mesmas cores usadas 
 - `login()` recebe `nome` explícito para garantir que `corretorNome === user.nome` funcione na filtragem de leads
 - Banco começa vazio — sem seeds. Primeiro usuário deve ser criado via console do navegador (ver abaixo)
 - Dados são perdidos se o localStorage for limpo
+- Tema (dark/light) é persistido em `leadflow_theme` no localStorage; toggle fica no header do layout
 
 ### Criando o primeiro usuário (gestor)
 
@@ -144,11 +146,11 @@ Após recarregar a página, logar com o email e senha definidos. A partir daí, 
 
 ### Estrutura de dados principais
 
-**MockUser:** `id, nome, email, senha, role, cidadeId?, empreendimentoIds?`
+**MockUser:** `id, nome, email, senha, role, empreendimentoIds?`
 - `loadUsers()` / `saveUsers()` — chave `leadflow_users`, versão `v3`
 
-**Lead:** `id, nome, telefone, cidadeId, empreendimento, notas?, status, sdrNome, corretorNome?, destinatarioNome?, criadoEm`
-- `loadLeads()` / `saveLeads()` — chave `leadflow_leads`, versão `v4`
+**Lead:** `id, nome, telefone, empreendimento, notas?, status, sdrNome, corretorId?, corretorNome?, destinatarioId?, destinatarioNome?, criadoEm`
+- `loadLeads()` / `saveLeads()` — chave `leadflow_leads`, versão `v5`
 
 **Empreendimento:** `id, nome, cidade (texto livre), status ("ativo"|"inativo"), criadoEm`
 - `loadEmpreendimentos()` / `saveEmpreendimentos()` — chave `leadflow_empreendimentos`, versão `v3`
@@ -158,7 +160,7 @@ Após recarregar a página, logar com o email e senha definidos. A partir daí, 
 | Chave | Versão atual | Limpa quando |
 |---|---|---|
 | `leadflow_users_version` | `v3` | schema de usuários muda |
-| `leadflow_seed_version` | `v4` | schema de leads muda |
+| `leadflow_seed_version` | `v5` | schema de leads muda |
 | `leadflow_empreendimentos_version` | `v3` | schema de empreendimentos muda |
 
 Ao trocar a versão no código, o localStorage é limpo automaticamente no próximo carregamento.
