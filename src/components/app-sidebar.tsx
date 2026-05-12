@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, Users, UserPlus, Inbox, ListChecks, LogOut, Building2, BrickWall,
+  LayoutDashboard, Users, UserPlus, Inbox, ListChecks, LogOut, Route, BrickWall,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -32,14 +32,14 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="border-b">
-        <div className="flex items-center gap-2 px-2 py-2">
+      <SidebarHeader className="h-14 border-b">
+        <div className="flex h-full items-center gap-2 px-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <Building2 className="h-4 w-4" />
+            <Route className="h-4 w-4" />
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-sm font-semibold">LeadFlow</span>
+              <span className="text-sm font-semibold">LeadRouter</span>
               <span className="text-xs text-muted-foreground">Imobiliário</span>
             </div>
           )}

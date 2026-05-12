@@ -74,12 +74,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lead Flow Pro" },
+      { title: "LeadRouter" },
       { name: "description", content: "Plataforma de gestão de leads e CRM" },
-      { property: "og:title", content: "Lead Flow Pro" },
+      { property: "og:title", content: "LeadRouter" },
       { property: "og:description", content: "Plataforma de gestão de leads e CRM" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "LeadRouter" },
     ],
     links: [
       {
