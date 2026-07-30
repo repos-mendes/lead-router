@@ -4,19 +4,39 @@ import { PageHeader } from "@/components/shared";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -31,7 +51,13 @@ export const Route = createFileRoute("/app/users")({
 
 const ROLES_COM_EMPREENDIMENTO: Role[] = ["corretor", "adm", "coordenador"];
 
-function EmpreendimentosCell({ ids, allNames }: { ids?: string[]; allNames: Record<string, string> }) {
+function EmpreendimentosCell({
+  ids,
+  allNames,
+}: {
+  ids?: string[];
+  allNames: Record<string, string>;
+}) {
   if (!ids || ids.length === 0) return <span className="text-muted-foreground">—</span>;
   const nomes = ids.map((id) => allNames[id]).filter(Boolean);
   if (nomes.length === 0) return <span className="text-muted-foreground">—</span>;
@@ -39,8 +65,16 @@ function EmpreendimentosCell({ ids, allNames }: { ids?: string[]; allNames: Reco
   const resto = nomes.length - visiveis.length;
   return (
     <div className="flex flex-wrap gap-1">
-      {visiveis.map((n) => <Badge key={n} variant="outline" className="text-xs">{n}</Badge>)}
-      {resto > 0 && <Badge variant="secondary" className="text-xs">+{resto}</Badge>}
+      {visiveis.map((n) => (
+        <Badge key={n} variant="outline" className="text-xs">
+          {n}
+        </Badge>
+      ))}
+      {resto > 0 && (
+        <Badge variant="secondary" className="text-xs">
+          +{resto}
+        </Badge>
+      )}
     </div>
   );
 }
@@ -90,11 +124,15 @@ function UsersPage() {
   const [editEmpIds, setEditEmpIds] = useState<string[]>([]);
   const [deleteUser, setDeleteUser] = useState<MockUser | null>(null);
   const [form, setForm] = useState({
-    nome: "", email: "", senha: "", role: "sdr" as Role, empreendimentoIds: [] as string[],
+    nome: "",
+    email: "",
+    senha: "",
+    role: "sdr" as Role,
+    empreendimentoIds: [] as string[],
   });
 
   const empNames: Record<string, string> = Object.fromEntries(
-    loadEmpreendimentos().map((e) => [e.id, e.nome])
+    loadEmpreendimentos().map((e) => [e.id, e.nome]),
   );
 
   if (!user) return <Navigate to="/login" />;
@@ -154,7 +192,7 @@ function UsersPage() {
             role: editRole,
             empreendimentoIds: ROLES_COM_EMPREENDIMENTO.includes(editRole) ? editEmpIds : undefined,
           }
-        : u
+        : u,
     );
     setUsers(updated);
     saveUsers(updated);
@@ -170,30 +208,51 @@ function UsersPage() {
         action={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-2" />Novo usuário</Button>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Novo usuário
+              </Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>Cadastrar usuário</DialogTitle></DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Cadastrar usuário</DialogTitle>
+              </DialogHeader>
               <div className="space-y-3">
                 <div className="space-y-2">
                   <Label>Nome</Label>
-                  <Input value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
+                  <Input
+                    value={form.nome}
+                    onChange={(e) => setForm({ ...form, nome: e.target.value })}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>E-mail</Label>
-                  <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                  <Input
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Senha</Label>
-                  <Input type="password" value={form.senha} onChange={(e) => setForm({ ...form, senha: e.target.value })} placeholder="••••••••" />
+                  <Input
+                    type="password"
+                    value={form.senha}
+                    onChange={(e) => setForm({ ...form, senha: e.target.value })}
+                    placeholder="••••••••"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Função</Label>
                   <Select value={form.role} onValueChange={(v) => setFormRole(v as Role)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       {(Object.keys(ROLE_LABEL) as Role[]).map((r) => (
-                        <SelectItem key={r} value={r}>{ROLE_LABEL[r]}</SelectItem>
+                        <SelectItem key={r} value={r}>
+                          {ROLE_LABEL[r]}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -209,8 +268,12 @@ function UsersPage() {
                 )}
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-                <Button onClick={create} disabled={!form.nome || !form.email || !form.senha}>Criar</Button>
+                <Button variant="outline" onClick={() => setOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button onClick={create} disabled={!form.nome || !form.email || !form.senha}>
+                  Criar
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -233,11 +296,15 @@ function UsersPage() {
               <TableRow key={u.id}>
                 <TableCell className="font-medium">{u.nome}</TableCell>
                 <TableCell>{u.email}</TableCell>
-                <TableCell><Badge variant="secondary">{ROLE_LABEL[u.role]}</Badge></TableCell>
                 <TableCell>
-                  {ROLES_COM_EMPREENDIMENTO.includes(u.role)
-                    ? <EmpreendimentosCell ids={u.empreendimentoIds} allNames={empNames} />
-                    : <span className="text-muted-foreground text-sm">—</span>}
+                  <Badge variant="secondary">{ROLE_LABEL[u.role]}</Badge>
+                </TableCell>
+                <TableCell>
+                  {ROLES_COM_EMPREENDIMENTO.includes(u.role) ? (
+                    <EmpreendimentosCell ids={u.empreendimentoIds} allNames={empNames} />
+                  ) : (
+                    <span className="text-muted-foreground text-sm">—</span>
+                  )}
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">
@@ -245,7 +312,12 @@ function UsersPage() {
                       <Pencil className="h-4 w-4" />
                     </Button>
                     {u.email !== user.email && (
-                      <Button size="icon" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteUser(u)}>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => setDeleteUser(u)}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     )}
@@ -257,24 +329,38 @@ function UsersPage() {
         </Table>
       </Card>
 
-      <AlertDialog open={!!deleteUser} onOpenChange={(o) => { if (!o) setDeleteUser(null); }}>
+      <AlertDialog
+        open={!!deleteUser}
+        onOpenChange={(o) => {
+          if (!o) setDeleteUser(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir usuário</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja excluir <strong>{deleteUser?.nome}</strong>? Esta ação não pode ser desfeita.
+              Tem certeza que deseja excluir <strong>{deleteUser?.nome}</strong>? Esta ação não pode
+              ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
               Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      <Dialog open={!!editUser} onOpenChange={(o) => { if (!o) setEditUser(null); }}>
+      <Dialog
+        open={!!editUser}
+        onOpenChange={(o) => {
+          if (!o) setEditUser(null);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Editar usuário</DialogTitle>
@@ -286,15 +372,22 @@ function UsersPage() {
             </div>
             <div className="space-y-2">
               <Label>Função</Label>
-              <Select value={editRole} onValueChange={(v) => {
-                const r = v as Role;
-                setEditRole(r);
-                if (!ROLES_COM_EMPREENDIMENTO.includes(r)) setEditEmpIds([]);
-              }}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <Select
+                value={editRole}
+                onValueChange={(v) => {
+                  const r = v as Role;
+                  setEditRole(r);
+                  if (!ROLES_COM_EMPREENDIMENTO.includes(r)) setEditEmpIds([]);
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {(Object.keys(ROLE_LABEL) as Role[]).map((r) => (
-                    <SelectItem key={r} value={r}>{ROLE_LABEL[r]}</SelectItem>
+                    <SelectItem key={r} value={r}>
+                      {ROLE_LABEL[r]}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -307,8 +400,12 @@ function UsersPage() {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditUser(null)}>Cancelar</Button>
-            <Button onClick={saveEdit} disabled={!editNome}>Salvar</Button>
+            <Button variant="outline" onClick={() => setEditUser(null)}>
+              Cancelar
+            </Button>
+            <Button onClick={saveEdit} disabled={!editNome}>
+              Salvar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

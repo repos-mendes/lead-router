@@ -1,10 +1,25 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, Users, UserPlus, Inbox, ListChecks, LogOut, Route, BrickWall,
+  LayoutDashboard,
+  Users,
+  UserPlus,
+  Inbox,
+  ListChecks,
+  LogOut,
+  Route,
+  BrickWall,
 } from "lucide-react";
 import {
-  Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
-  SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarFooter,
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarHeader,
+  SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuth, ROLE_LABEL, type Role } from "@/lib/auth";
@@ -13,7 +28,12 @@ import { Button } from "@/components/ui/button";
 type Item = { title: string; url: string; icon: typeof Users; roles: Role[] };
 
 const ITEMS: Item[] = [
-  { title: "Dashboard", url: "/app", icon: LayoutDashboard, roles: ["gestor", "coordenador", "adm", "sdr", "corretor"] },
+  {
+    title: "Dashboard",
+    url: "/app",
+    icon: LayoutDashboard,
+    roles: ["gestor", "coordenador", "adm", "sdr", "corretor"],
+  },
   { title: "Usuários", url: "/app/users", icon: Users, roles: ["gestor"] },
   { title: "Empreendimentos", url: "/app/empreendimentos", icon: BrickWall, roles: ["gestor"] },
   { title: "Novo Lead", url: "/app/leads/new", icon: UserPlus, roles: ["gestor", "sdr"] },
@@ -52,7 +72,8 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => {
-                const active = path === item.url || (item.url !== "/app" && path.startsWith(item.url));
+                const active =
+                  path === item.url || (item.url !== "/app" && path.startsWith(item.url));
                 return (
                   <SidebarMenuItem key={item.url}>
                     <SidebarMenuButton asChild isActive={active}>

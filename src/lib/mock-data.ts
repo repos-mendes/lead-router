@@ -31,7 +31,12 @@ export function saveEmpreendimentos(list: Empreendimento[]) {
   localStorage.setItem(EMP_KEY, JSON.stringify(list));
 }
 
-export type LeadStatus = "aguardando" | "distribuido" | "em_atendimento" | "contato_feito" | "numero_invalido";
+export type LeadStatus =
+  | "aguardando"
+  | "distribuido"
+  | "em_atendimento"
+  | "contato_feito"
+  | "numero_invalido";
 
 export interface Lead {
   id: string;

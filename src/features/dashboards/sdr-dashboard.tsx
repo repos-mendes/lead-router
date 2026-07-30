@@ -8,18 +8,40 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectSeparator,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth";
 import { loadLeads, saveLeads, loadUsers, loadEmpreendimentos, type Lead } from "@/lib/mock-data";
-import { UserPlus, Inbox, CheckCircle2, Clock, RefreshCw, CalendarDays, ChevronDown } from "lucide-react";
+import {
+  UserPlus,
+  Inbox,
+  CheckCircle2,
+  Clock,
+  RefreshCw,
+  CalendarDays,
+  ChevronDown,
+} from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -28,16 +50,24 @@ import { cn } from "@/lib/utils";
 type Periodo = "hoje" | "ontem" | "7d" | "30d" | "90d" | "todos" | "personalizado";
 
 const PRESETS: { value: Exclude<Periodo, "personalizado">; label: string }[] = [
-  { value: "hoje",  label: "Hoje" },
+  { value: "hoje", label: "Hoje" },
   { value: "ontem", label: "Ontem" },
-  { value: "7d",    label: "Últimos 7 dias" },
-  { value: "30d",   label: "Últimos 30 dias" },
-  { value: "90d",   label: "Últimos 90 dias" },
+  { value: "7d", label: "Últimos 7 dias" },
+  { value: "30d", label: "Últimos 30 dias" },
+  { value: "90d", label: "Últimos 90 dias" },
   { value: "todos", label: "Todo o período" },
 ];
 
-function startOfDay(d: Date) { const r = new Date(d); r.setHours(0, 0, 0, 0); return r; }
-function endOfDay(d: Date)   { const r = new Date(d); r.setHours(23, 59, 59, 999); return r; }
+function startOfDay(d: Date) {
+  const r = new Date(d);
+  r.setHours(0, 0, 0, 0);
+  return r;
+}
+function endOfDay(d: Date) {
+  const r = new Date(d);
+  r.setHours(23, 59, 59, 999);
+  return r;
+}
 function fmtBR(d: Date) {
   return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" });
 }
@@ -48,19 +78,30 @@ function filtrarLeads(leads: Lead[], periodo: Periodo, range: DateRange | undefi
     if (!range?.from) return leads;
     const de = startOfDay(range.from);
     const ate = endOfDay(range.to ?? range.from);
-    return leads.filter((l) => { const d = new Date(l.criadoEm); return d >= de && d <= ate; });
+    return leads.filter((l) => {
+      const d = new Date(l.criadoEm);
+      return d >= de && d <= ate;
+    });
   }
   if (periodo === "ontem") {
     const de = new Date(hoje.getTime() - 86400000);
-    return leads.filter((l) => { const d = new Date(l.criadoEm); return d >= de && d < hoje; });
+    return leads.filter((l) => {
+      const d = new Date(l.criadoEm);
+      return d >= de && d < hoje;
+    });
   }
   const inicio: Date | null = (() => {
     switch (periodo) {
-      case "hoje": return hoje;
-      case "7d":   return new Date(hoje.getTime() - 6  * 86400000);
-      case "30d":  return new Date(hoje.getTime() - 29 * 86400000);
-      case "90d":  return new Date(hoje.getTime() - 89 * 86400000);
-      default:     return null;
+      case "hoje":
+        return hoje;
+      case "7d":
+        return new Date(hoje.getTime() - 6 * 86400000);
+      case "30d":
+        return new Date(hoje.getTime() - 29 * 86400000);
+      case "90d":
+        return new Date(hoje.getTime() - 89 * 86400000);
+      default:
+        return null;
     }
   })();
   return inicio ? leads.filter((l) => new Date(l.criadoEm) >= inicio!) : leads;
@@ -74,7 +115,10 @@ function labelFiltro(periodo: Periodo, range: DateRange | undefined): string {
 }
 
 function FiltroData({
-  periodo, setPeriodo, range, setRange,
+  periodo,
+  setPeriodo,
+  range,
+  setRange,
 }: {
   periodo: Periodo;
   setPeriodo: (p: Periodo) => void;
@@ -97,7 +141,11 @@ function FiltroData({
             {PRESETS.map((p) => (
               <button
                 key={p.value}
-                onClick={() => { setPeriodo(p.value); setRange(undefined); setOpen(false); }}
+                onClick={() => {
+                  setPeriodo(p.value);
+                  setRange(undefined);
+                  setOpen(false);
+                }}
                 className={cn(
                   "text-left text-sm px-3 py-1.5 rounded-md hover:bg-accent whitespace-nowrap transition-colors",
                   periodo === p.value && "bg-accent font-medium",
@@ -161,7 +209,7 @@ export function SdrDashboard() {
 
   const meusFiltrados = filtrarLeads(meus, periodo, range);
   const distribuidos = meusFiltrados.filter((l) => l.status !== "aguardando").length;
-  const aguardando   = meusFiltrados.filter((l) => l.status === "aguardando").length;
+  const aguardando = meusFiltrados.filter((l) => l.status === "aguardando").length;
 
   const todosEmpreendimentos = loadEmpreendimentos().filter((e) => e.status === "ativo");
   const empreendimentos = user?.empreendimentoIds?.length
@@ -170,11 +218,15 @@ export function SdrDashboard() {
 
   const allUsers = loadUsers();
   const selectedEmp = todosEmpreendimentos.find((e) => e.nome === novoEmp);
-  const adms = allUsers.filter((u) =>
-    u.role === "adm" && (!selectedEmp || (u.empreendimentoIds?.includes(selectedEmp.id) ?? false))
+  const adms = allUsers.filter(
+    (u) =>
+      u.role === "adm" &&
+      (!selectedEmp || (u.empreendimentoIds?.includes(selectedEmp.id) ?? false)),
   );
-  const corretores = allUsers.filter((u) =>
-    u.role === "corretor" && (!selectedEmp || (u.empreendimentoIds?.includes(selectedEmp.id) ?? false))
+  const corretores = allUsers.filter(
+    (u) =>
+      u.role === "corretor" &&
+      (!selectedEmp || (u.empreendimentoIds?.includes(selectedEmp.id) ?? false)),
   );
   const destinatarioSelecionado = [...adms, ...corretores].find((u) => u.id === destinatarioId);
 
@@ -220,7 +272,8 @@ export function SdrDashboard() {
         action={
           <Button asChild>
             <Link to="/app/leads/new">
-              <UserPlus className="h-4 w-4 mr-2" />Cadastrar Lead
+              <UserPlus className="h-4 w-4 mr-2" />
+              Cadastrar Lead
             </Link>
           </Button>
         }
@@ -234,7 +287,12 @@ export function SdrDashboard() {
 
         <TabsContent value="visao-geral">
           <div className="flex items-center justify-end mb-4">
-            <FiltroData periodo={periodo} setPeriodo={setPeriodo} range={range} setRange={setRange} />
+            <FiltroData
+              periodo={periodo}
+              setPeriodo={setPeriodo}
+              range={range}
+              setRange={setRange}
+            />
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             <StatCard
@@ -281,11 +339,16 @@ export function SdrDashboard() {
                         <div className="text-xs text-muted-foreground">{l.telefone}</div>
                       </TableCell>
                       <TableCell className="hidden md:table-cell">{l.empreendimento}</TableCell>
-                      <TableCell className="text-sm">{l.destinatarioNome ?? l.corretorNome ?? "—"}</TableCell>
-                      <TableCell><StatusBadge status={l.status} /></TableCell>
+                      <TableCell className="text-sm">
+                        {l.destinatarioNome ?? l.corretorNome ?? "—"}
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={l.status} />
+                      </TableCell>
                       <TableCell className="text-right">
                         <Button size="sm" onClick={() => abrirReatribuir(l)}>
-                          <RefreshCw className="h-3.5 w-3.5 mr-1" />Reatribuir
+                          <RefreshCw className="h-3.5 w-3.5 mr-1" />
+                          Reatribuir
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -297,7 +360,12 @@ export function SdrDashboard() {
         </TabsContent>
       </Tabs>
 
-      <Dialog open={!!selected} onOpenChange={(o) => { if (!o) fecharDialog(); }}>
+      <Dialog
+        open={!!selected}
+        onOpenChange={(o) => {
+          if (!o) fecharDialog();
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Reatribuir lead</DialogTitle>
@@ -305,17 +373,31 @@ export function SdrDashboard() {
           {selected && (
             <div className="space-y-4 text-sm">
               <div className="rounded-md border p-3 space-y-1 bg-muted/40">
-                <p><span className="text-muted-foreground">Lead:</span> <span className="font-medium">{selected.nome}</span></p>
-                <p><span className="text-muted-foreground">Telefone:</span> {selected.telefone}</p>
+                <p>
+                  <span className="text-muted-foreground">Lead:</span>{" "}
+                  <span className="font-medium">{selected.nome}</span>
+                </p>
+                <p>
+                  <span className="text-muted-foreground">Telefone:</span> {selected.telefone}
+                </p>
               </div>
               <div className="space-y-2">
                 <Label>Empreendimento</Label>
-                <Select value={novoEmp} onValueChange={(v) => { setNovoEmp(v); setDestinatarioId(""); }}>
-                  <SelectTrigger><SelectValue placeholder="Selecione o empreendimento" /></SelectTrigger>
+                <Select
+                  value={novoEmp}
+                  onValueChange={(v) => {
+                    setNovoEmp(v);
+                    setDestinatarioId("");
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o empreendimento" />
+                  </SelectTrigger>
                   <SelectContent>
                     {empreendimentos.map((e) => (
                       <SelectItem key={e.id} value={e.nome}>
-                        {e.nome}{e.cidade ? ` — ${e.cidade}` : ""}
+                        {e.nome}
+                        {e.cidade ? ` — ${e.cidade}` : ""}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -323,9 +405,19 @@ export function SdrDashboard() {
               </div>
               <div className="space-y-2">
                 <Label>Destinatário</Label>
-                <Select value={destinatarioId} onValueChange={setDestinatarioId} disabled={!novoEmp}>
+                <Select
+                  value={destinatarioId}
+                  onValueChange={setDestinatarioId}
+                  disabled={!novoEmp}
+                >
                   <SelectTrigger>
-                    <SelectValue placeholder={novoEmp ? "Selecione corretor ou ADM" : "Selecione o empreendimento primeiro"} />
+                    <SelectValue
+                      placeholder={
+                        novoEmp
+                          ? "Selecione corretor ou ADM"
+                          : "Selecione o empreendimento primeiro"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {adms.length > 0 && (
@@ -334,7 +426,9 @@ export function SdrDashboard() {
                           ADMs de Expansão
                         </div>
                         {adms.map((u) => (
-                          <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>
+                          <SelectItem key={u.id} value={u.id}>
+                            {u.nome}
+                          </SelectItem>
                         ))}
                         {corretores.length > 0 && <SelectSeparator />}
                       </>
@@ -345,7 +439,9 @@ export function SdrDashboard() {
                           Corretores
                         </div>
                         {corretores.map((u) => (
-                          <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>
+                          <SelectItem key={u.id} value={u.id}>
+                            {u.nome}
+                          </SelectItem>
                         ))}
                       </>
                     )}
@@ -367,8 +463,12 @@ export function SdrDashboard() {
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={fecharDialog}>Cancelar</Button>
-            <Button onClick={confirmarReatribuicao} disabled={!novoEmp || !destinatarioId}>Confirmar</Button>
+            <Button variant="outline" onClick={fecharDialog}>
+              Cancelar
+            </Button>
+            <Button onClick={confirmarReatribuicao} disabled={!novoEmp || !destinatarioId}>
+              Confirmar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -6,18 +6,18 @@ CRM de leads imobiliários chamado **LeadRouter**. Gerencia o fluxo de clientes 
 
 ## Stack tecnológica
 
-| Tecnologia | Versão | Uso |
-|---|---|---|
-| TypeScript | ~5.8 | Linguagem principal |
-| React | 19 | Framework de UI |
-| TanStack Start | ~1.167 | SSR e servidor |
-| TanStack Router | ~1.168 | Roteamento por arquivos |
-| TanStack Query | ~5.83 | Gerenciamento de estado/dados |
-| Tailwind CSS | v4 | Estilização |
-| shadcn/ui + Radix UI | — | Componentes prontos |
-| Vite | 7 | Build tool |
-| Bun | 1.3.13 | Package manager e runtime |
-| Cloudflare Workers | — | Plataforma de deploy |
+| Tecnologia           | Versão | Uso                           |
+| -------------------- | ------ | ----------------------------- |
+| TypeScript           | ~5.8   | Linguagem principal           |
+| React                | 19     | Framework de UI               |
+| TanStack Start       | ~1.167 | SSR e servidor                |
+| TanStack Router      | ~1.168 | Roteamento por arquivos       |
+| TanStack Query       | ~5.83  | Gerenciamento de estado/dados |
+| Tailwind CSS         | v4     | Estilização                   |
+| shadcn/ui + Radix UI | —      | Componentes prontos           |
+| Vite                 | 7      | Build tool                    |
+| Bun                  | 1.3.13 | Package manager e runtime     |
+| Cloudflare Workers   | —      | Plataforma de deploy          |
 
 ## Como rodar
 
@@ -74,13 +74,13 @@ src/
 
 ## Perfis de usuário (Roles)
 
-| Role | Label na UI | Acesso |
-|---|---|---|
-| `gestor` | Gestor | Visão total — todos os leads, gerencia usuários e empreendimentos, reatribui qualquer lead |
-| `coordenador` | Coordenador | Métricas e acompanhamento dos seus empreendimentos (read-only) |
-| `adm` | ADM de Expansão | Recebe leads do SDR e distribui para corretores dos seus empreendimentos |
-| `sdr` | SDR | Cadastra novos leads e escolhe o destinatário (corretor ou ADM) |
-| `corretor` | Corretor | Aceita leads da sua fila e registra o resultado do contato |
+| Role          | Label na UI     | Acesso                                                                                     |
+| ------------- | --------------- | ------------------------------------------------------------------------------------------ |
+| `gestor`      | Gestor          | Visão total — todos os leads, gerencia usuários e empreendimentos, reatribui qualquer lead |
+| `coordenador` | Coordenador     | Métricas e acompanhamento dos seus empreendimentos (read-only)                             |
+| `adm`         | ADM de Expansão | Recebe leads do SDR e distribui para corretores dos seus empreendimentos                   |
+| `sdr`         | SDR             | Cadastra novos leads e escolhe o destinatário (corretor ou ADM)                            |
+| `corretor`    | Corretor        | Aceita leads da sua fila e registra o resultado do contato                                 |
 
 - `adm`, `corretor` e `coordenador` têm `empreendimentoIds` — vinculados a empreendimentos específicos
 - `gestor` não tem `empreendimentoIds` — vê tudo automaticamente (tratado com flag `semFiltro`)
@@ -108,13 +108,13 @@ Corretor acessa /app/my-leads
 
 ## Status e cores
 
-| Valor interno     | Label             | Cor badge  |
-|-------------------|-------------------|------------|
-| `aguardando`      | Aguardando        | Âmbar      |
-| `distribuido`     | Aguardando ação   | Laranja    |
-| `em_atendimento`  | Lead Aceito       | Azul       |
-| `contato_feito`   | Contato Feito     | Verde      |
-| `numero_invalido` | Número Inválido   | Vermelho   |
+| Valor interno     | Label           | Cor badge |
+| ----------------- | --------------- | --------- |
+| `aguardando`      | Aguardando      | Âmbar     |
+| `distribuido`     | Aguardando ação | Laranja   |
+| `em_atendimento`  | Lead Aceito     | Azul      |
+| `contato_feito`   | Contato Feito   | Verde     |
+| `numero_invalido` | Número Inválido | Vermelho  |
 
 Definidos em `src/components/shared.tsx` → `StatusBadge`. Mesmas cores usadas em todas as dashboards.
 
@@ -133,13 +133,18 @@ Abrir o console do navegador (F12) e colar:
 
 ```js
 localStorage.setItem("leadflow_users_version", "v3");
-localStorage.setItem("leadflow_users", JSON.stringify([{
-  id: crypto.randomUUID(),
-  nome: "Seu Nome",
-  email: "seu@email.com",
-  senha: "suasenha",
-  role: "gestor"
-}]));
+localStorage.setItem(
+  "leadflow_users",
+  JSON.stringify([
+    {
+      id: crypto.randomUUID(),
+      nome: "Seu Nome",
+      email: "seu@email.com",
+      senha: "suasenha",
+      role: "gestor",
+    },
+  ]),
+);
 ```
 
 Após recarregar a página, logar com o email e senha definidos. A partir daí, criar outros usuários pela tela de Usuários da plataforma.
@@ -147,41 +152,44 @@ Após recarregar a página, logar com o email e senha definidos. A partir daí, 
 ### Estrutura de dados principais
 
 **MockUser:** `id, nome, email, senha, role, empreendimentoIds?`
+
 - `loadUsers()` / `saveUsers()` — chave `leadflow_users`, versão `v3`
 
 **Lead:** `id, nome, telefone, empreendimento, notas?, status, sdrNome, corretorId?, corretorNome?, destinatarioId?, destinatarioNome?, criadoEm`
+
 - `loadLeads()` / `saveLeads()` — chave `leadflow_leads`, versão `v5`
 
 **Empreendimento:** `id, nome, cidade (texto livre), status ("ativo"|"inativo"), criadoEm`
+
 - `loadEmpreendimentos()` / `saveEmpreendimentos()` — chave `leadflow_empreendimentos`, versão `v3`
 
 ### Versionamento do seed (localStorage)
 
-| Chave | Versão atual | Limpa quando |
-|---|---|---|
-| `leadflow_users_version` | `v3` | schema de usuários muda |
-| `leadflow_seed_version` | `v5` | schema de leads muda |
-| `leadflow_empreendimentos_version` | `v3` | schema de empreendimentos muda |
+| Chave                              | Versão atual | Limpa quando                   |
+| ---------------------------------- | ------------ | ------------------------------ |
+| `leadflow_users_version`           | `v3`         | schema de usuários muda        |
+| `leadflow_seed_version`            | `v5`         | schema de leads muda           |
+| `leadflow_empreendimentos_version` | `v3`         | schema de empreendimentos muda |
 
 Ao trocar a versão no código, o localStorage é limpo automaticamente no próximo carregamento.
 
 ## Configuração do Vite (`vite.config.ts`)
 
 ```ts
-import { defineConfig } from 'vite'
-import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import { defineConfig } from "vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [
-    tanstackStart({ server: { entry: 'server' } }),
+    tanstackStart({ server: { entry: "server" } }),
     react(),
     tailwindcss(),
     tsconfigPaths(),
   ],
-})
+});
 ```
 
 **Importante:** `@cloudflare/vite-plugin` foi removido intencionalmente. Quando incluído, ele faz o TanStack Start gerar um manifesto com `clientEntry: "/@id/virtual:tanstack-start-client-entry"` (referência de módulo virtual do dev-mode do Vite), causando página em branco na produção. Sem o plugin, o build gera `dist/server/server.js` com manifesto correto, e o wrangler bundlea as dependências na etapa de deploy.
@@ -224,7 +232,7 @@ Qualquer `git push` na branch `main` dispara o GitHub Actions (`.github/workflow
 `@/` mapeia para `src/` (configurado no `tsconfig.json` e resolvido pelo `vite-tsconfig-paths`).
 
 ```ts
-import { useAuth } from '@/lib/auth'  // → src/lib/auth.tsx
+import { useAuth } from "@/lib/auth"; // → src/lib/auth.tsx
 ```
 
 ## Roadmap: migração para produção
@@ -247,13 +255,13 @@ Cloudflare Workers  ← CONCLUÍDO
 
 ### Serviços escolhidos e justificativa
 
-| Serviço | Função | Plano gratuito |
-|---|---|---|
-| Cloudflare D1 | Banco de dados principal | 5 GB + 5M leituras/dia |
-| Cloudflare R2 | Armazenamento de arquivos | 10 GB |
-| Cloudflare KV | Cache e sessões | 1 GB |
-| Clerk | Autenticação (login, senha, convites, 2FA) | Até 10.000 usuários/mês |
-| Drizzle ORM | Camada TypeScript para o banco D1 | Open source |
+| Serviço       | Função                                     | Plano gratuito          |
+| ------------- | ------------------------------------------ | ----------------------- |
+| Cloudflare D1 | Banco de dados principal                   | 5 GB + 5M leituras/dia  |
+| Cloudflare R2 | Armazenamento de arquivos                  | 10 GB                   |
+| Cloudflare KV | Cache e sessões                            | 1 GB                    |
+| Clerk         | Autenticação (login, senha, convites, 2FA) | Até 10.000 usuários/mês |
+| Drizzle ORM   | Camada TypeScript para o banco D1          | Open source             |
 
 **Para 50 usuários o custo é zero** — usa menos de 5% dos limites gratuitos.
 

@@ -9,10 +9,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { loadEmpreendimentos, saveEmpreendimentos, type Empreendimento } from "@/lib/mock-data";
 import { Plus, List, Pencil, PowerOff, Power } from "lucide-react";
@@ -80,7 +89,9 @@ function EmpreendimentosPage() {
       criadoEm: new Date().toISOString(),
     }));
     persist([...novos, ...lista]);
-    toast.success(`${novos.length} empreendimento${novos.length > 1 ? "s" : ""} cadastrado${novos.length > 1 ? "s" : ""}.`);
+    toast.success(
+      `${novos.length} empreendimento${novos.length > 1 ? "s" : ""} cadastrado${novos.length > 1 ? "s" : ""}.`,
+    );
     setOpenLote(false);
     setLoteTexto("");
   };
@@ -92,16 +103,22 @@ function EmpreendimentosPage() {
 
   const salvarEdicao = () => {
     if (!editando || !editForm.nome.trim()) return;
-    persist(lista.map((e) =>
-      e.id === editando.id ? { ...e, nome: editForm.nome.trim(), cidade: editForm.cidade.trim() } : e
-    ));
+    persist(
+      lista.map((e) =>
+        e.id === editando.id
+          ? { ...e, nome: editForm.nome.trim(), cidade: editForm.cidade.trim() }
+          : e,
+      ),
+    );
     toast.success(`"${editForm.nome.trim()}" atualizado.`);
     setEditando(null);
   };
 
   const toggleStatus = (id: string) => {
     const atualizado = lista.map((e) =>
-      e.id === id ? { ...e, status: e.status === "ativo" ? ("inativo" as const) : ("ativo" as const) } : e
+      e.id === id
+        ? { ...e, status: e.status === "ativo" ? ("inativo" as const) : ("ativo" as const) }
+        : e,
     );
     persist(atualizado);
     const emp = atualizado.find((e) => e.id === id)!;
@@ -119,18 +136,24 @@ function EmpreendimentosPage() {
         action={
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setOpenLote(true)}>
-              <List className="h-4 w-4 mr-2" />Cadastro em massa
+              <List className="h-4 w-4 mr-2" />
+              Cadastro em massa
             </Button>
             <Button onClick={() => setOpenNovo(true)}>
-              <Plus className="h-4 w-4 mr-2" />Novo
+              <Plus className="h-4 w-4 mr-2" />
+              Novo
             </Button>
           </div>
         }
       />
 
       <div className="flex gap-3 mb-4">
-        <Badge variant="secondary" className="bg-green-100 text-green-800">{ativos} ativos</Badge>
-        <Badge variant="secondary" className="bg-muted text-muted-foreground">{inativos} inativos</Badge>
+        <Badge variant="secondary" className="bg-green-100 text-green-800">
+          {ativos} ativos
+        </Badge>
+        <Badge variant="secondary" className="bg-muted text-muted-foreground">
+          {inativos} inativos
+        </Badge>
       </div>
 
       <Card>
@@ -154,21 +177,34 @@ function EmpreendimentosPage() {
                   <TableCell className="font-medium">{e.nome}</TableCell>
                   <TableCell className="text-muted-foreground">{e.cidade || "—"}</TableCell>
                   <TableCell>
-                    {e.status === "ativo"
-                      ? <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Ativo</Badge>
-                      : <Badge variant="secondary">Inativo</Badge>
-                    }
+                    {e.status === "ativo" ? (
+                      <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                        Ativo
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary">Inativo</Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-right space-x-1">
-                    <Button size="icon" variant="ghost" onClick={() => abrirEdicao(e)} title="Editar">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => abrirEdicao(e)}
+                      title="Editar"
+                    >
                       <Pencil className="h-4 w-4 text-muted-foreground" />
                     </Button>
-                    <Button size="icon" variant="ghost" onClick={() => toggleStatus(e.id)}
-                      title={e.status === "ativo" ? "Desativar" : "Reativar"}>
-                      {e.status === "ativo"
-                        ? <PowerOff className="h-4 w-4 text-muted-foreground" />
-                        : <Power className="h-4 w-4 text-green-600" />
-                      }
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => toggleStatus(e.id)}
+                      title={e.status === "ativo" ? "Desativar" : "Reativar"}
+                    >
+                      {e.status === "ativo" ? (
+                        <PowerOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Power className="h-4 w-4 text-green-600" />
+                      )}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -181,7 +217,9 @@ function EmpreendimentosPage() {
       {/* Dialog: novo */}
       <Dialog open={openNovo} onOpenChange={setOpenNovo}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Novo empreendimento</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Novo empreendimento</DialogTitle>
+          </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-2">
               <Label>Nome</Label>
@@ -203,8 +241,12 @@ function EmpreendimentosPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenNovo(false)}>Cancelar</Button>
-            <Button onClick={criar} disabled={!novoForm.nome.trim()}>Cadastrar</Button>
+            <Button variant="outline" onClick={() => setOpenNovo(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={criar} disabled={!novoForm.nome.trim()}>
+              Cadastrar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -212,15 +254,19 @@ function EmpreendimentosPage() {
       {/* Dialog: cadastro em massa */}
       <Dialog open={openLote} onOpenChange={setOpenLote}>
         <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>Cadastro em massa</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Cadastro em massa</DialogTitle>
+          </DialogHeader>
           <div className="space-y-3">
             <p className="text-xs text-muted-foreground">
-              Uma entrada por linha no formato <span className="font-mono">Nome, Cidade</span>.
-              A cidade é opcional.
+              Uma entrada por linha no formato <span className="font-mono">Nome, Cidade</span>. A
+              cidade é opcional.
             </p>
             <Textarea
               rows={10}
-              placeholder={"Residencial Aurora, São Paulo\nVista Mar, Rio de Janeiro\nTorre Platinum, Curitiba"}
+              placeholder={
+                "Residencial Aurora, São Paulo\nVista Mar, Rio de Janeiro\nTorre Platinum, Curitiba"
+              }
               value={loteTexto}
               onChange={(e) => setLoteTexto(e.target.value)}
               className="font-mono text-sm"
@@ -238,7 +284,9 @@ function EmpreendimentosPage() {
                     {loteLinhas.map((r, i) => (
                       <TableRow key={i}>
                         <TableCell className="py-1.5 text-sm">{r.nome}</TableCell>
-                        <TableCell className="py-1.5 text-sm text-muted-foreground">{r.cidade || "—"}</TableCell>
+                        <TableCell className="py-1.5 text-sm text-muted-foreground">
+                          {r.cidade || "—"}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -247,7 +295,9 @@ function EmpreendimentosPage() {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenLote(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setOpenLote(false)}>
+              Cancelar
+            </Button>
             <Button onClick={criarLote} disabled={loteLinhas.length === 0}>
               Cadastrar {loteLinhas.length > 0 ? loteLinhas.length : ""}
             </Button>
@@ -258,7 +308,9 @@ function EmpreendimentosPage() {
       {/* Dialog: editar */}
       <Dialog open={!!editando} onOpenChange={(o) => !o && setEditando(null)}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Editar empreendimento</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Editar empreendimento</DialogTitle>
+          </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-2">
               <Label>Nome</Label>
@@ -279,8 +331,12 @@ function EmpreendimentosPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditando(null)}>Cancelar</Button>
-            <Button onClick={salvarEdicao} disabled={!editForm.nome.trim()}>Salvar</Button>
+            <Button variant="outline" onClick={() => setEditando(null)}>
+              Cancelar
+            </Button>
+            <Button onClick={salvarEdicao} disabled={!editForm.nome.trim()}>
+              Salvar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

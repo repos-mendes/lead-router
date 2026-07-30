@@ -14,10 +14,15 @@ function AppIndex() {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" />;
   switch (user.role) {
-    case "gestor": return <GestorDashboard />;
-    case "coordenador": return <CoordenadorDashboard />;
-    case "adm": return <AdmDashboard />;
-    case "sdr": return <SdrDashboard />;
-    case "corretor": return <CorretorDashboard />;
+    case "gestor":
+      return <GestorDashboard />;
+    case "coordenador":
+      return <CoordenadorDashboard />;
+    case "adm":
+      return <AdmDashboard />;
+    case "sdr":
+      return <SdrDashboard />;
+    case "corretor":
+      return <CorretorDashboard />;
   }
 }
