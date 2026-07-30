@@ -45,7 +45,7 @@ function LoginPage() {
                 <Building2 className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-2xl">LeadFlow</CardTitle>
+                <CardTitle className="text-2xl">LeadRouter</CardTitle>
                 <CardDescription>Gestão de Leads Imobiliários</CardDescription>
               </div>
             </div>
