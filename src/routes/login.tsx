@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { loadUsers } from "@/lib/mock-data";
-import { Building2 } from "lucide-react";
+// alias obrigatorio: "Route" ja e o nome do export da rota abaixo
+import { Route as RouteIcon } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -42,7 +43,7 @@ function LoginPage() {
           <CardHeader className="space-y-3">
             <div className="flex items-center gap-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Building2 className="h-5 w-5" />
+                <RouteIcon className="h-5 w-5" />
               </div>
               <div>
                 <CardTitle className="text-2xl">LeadRouter</CardTitle>
