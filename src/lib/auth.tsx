@@ -12,7 +12,13 @@ export interface AuthUser {
 
 interface AuthCtx {
   user: AuthUser | null;
-  login: (id: string, email: string, role: Role, nome: string, empreendimentoIds?: string[]) => void;
+  login: (
+    id: string,
+    email: string,
+    role: Role,
+    nome: string,
+    empreendimentoIds?: string[],
+  ) => void;
   logout: () => void;
 }
 
@@ -34,10 +40,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) setUser(JSON.parse(raw));
-    } catch {}
+    } catch {
+      // sessão inválida no localStorage — segue sem usuário logado
+    }
   }, []);
 
-  const login = (id: string, email: string, role: Role, nome: string, empreendimentoIds?: string[]) => {
+  const login = (
+    id: string,
+    email: string,
+    role: Role,
+    nome: string,
+    empreendimentoIds?: string[],
+  ) => {
     const u: AuthUser = { id, nome, email, role, empreendimentoIds };
     localStorage.setItem(KEY, JSON.stringify(u));
     setUser(u);

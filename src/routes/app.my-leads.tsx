@@ -1,13 +1,19 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { PageHeader, StatusBadge } from "@/components/shared";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { loadLeads, saveLeads, type Lead, type LeadStatus } from "@/lib/mock-data";
 import {
-  Copy, MessageCircle, CheckCircle, XCircle,
-  ChevronDown, ChevronRight, Clock, AlertCircle,
+  Copy,
+  MessageCircle,
+  CheckCircle,
+  XCircle,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -27,13 +33,19 @@ function timeAgo(iso: string) {
 
 function MyLeads() {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/login" />;
-  if (user.role !== "corretor") return <Navigate to="/app" />;
-
   const [leads, setLeads] = useState<Lead[]>(() =>
-    loadLeads().filter((l) => l.corretorId === user.id)
+    user ? loadLeads().filter((l) => l.corretorId === user.id) : [],
   );
   const [historicoAberto, setHistoricoAberto] = useState(false);
+
+  // o usuário só existe depois que o AuthProvider lê o localStorage
+  useEffect(() => {
+    if (!user) return;
+    setLeads(loadLeads().filter((l) => l.corretorId === user.id));
+  }, [user]);
+
+  if (!user) return <Navigate to="/login" />;
+  if (user.role !== "corretor") return <Navigate to="/app" />;
 
   const novos = leads
     .filter((l) => l.status === "distribuido" || (l.status === "aguardando" && !!l.corretorId))
@@ -107,9 +119,7 @@ function MyLeads() {
                       <span className="w-2 h-2 rounded-full bg-orange-500 shrink-0" />
                       <span className="font-semibold">{l.nome}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-0.5 ml-4">
-                      {l.empreendimento}
-                    </p>
+                    <p className="text-sm text-muted-foreground mt-0.5 ml-4">{l.empreendimento}</p>
                     <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1 ml-4">
                       <Clock className="h-3 w-3" /> {timeAgo(l.criadoEm)}
                     </p>
@@ -140,7 +150,9 @@ function MyLeads() {
         </div>
 
         {atendimento.length === 0 ? (
-          <p className="text-sm text-muted-foreground pl-1">Parabéns, você entrou em contato com todos os seus leads!</p>
+          <p className="text-sm text-muted-foreground pl-1">
+            Parabéns, você entrou em contato com todos os seus leads!
+          </p>
         ) : (
           <div className="grid gap-3">
             {atendimento.map((l) => (
@@ -148,9 +160,7 @@ function MyLeads() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <p className="font-semibold">{l.nome}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {l.empreendimento}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{l.empreendimento}</p>
                     <p className="text-sm font-mono mt-1">{l.telefone}</p>
                     {l.notas && (
                       <p className="text-xs text-muted-foreground italic mt-1">{l.notas}</p>
@@ -198,10 +208,11 @@ function MyLeads() {
           className="flex items-center gap-2 border-b pb-2 mb-3 w-full text-left hover:opacity-70 transition-opacity"
           onClick={() => setHistoricoAberto((v) => !v)}
         >
-          {historicoAberto
-            ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            : <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          }
+          {historicoAberto ? (
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          )}
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             Histórico
           </h2>
@@ -210,8 +221,8 @@ function MyLeads() {
           </span>
         </button>
 
-        {historicoAberto && (
-          historico.length === 0 ? (
+        {historicoAberto &&
+          (historico.length === 0 ? (
             <p className="text-sm text-muted-foreground pl-1">Nenhum lead no histórico ainda.</p>
           ) : (
             <div className="grid gap-2">
@@ -226,7 +237,12 @@ function MyLeads() {
                       <p className="text-xs font-mono mt-1">{l.telefone}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => copy(l.telefone)}>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-7 w-7"
+                        onClick={() => copy(l.telefone)}
+                      >
                         <Copy className="h-3.5 w-3.5" />
                       </Button>
                       <StatusBadge status={l.status} />
@@ -235,8 +251,7 @@ function MyLeads() {
                 </Card>
               ))}
             </div>
-          )
-        )}
+          ))}
       </section>
     </div>
   );
