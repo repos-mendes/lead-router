@@ -1,8 +1,8 @@
-# Lead Flow Pro — Guia do Projeto
+# LeadRouter — Guia do Projeto
 
 ## O que é este projeto
 
-CRM de leads imobiliários chamado **LeadRouter**. Gerencia o fluxo de clientes interessados em imóveis, do primeiro contato até a venda, com dashboards diferentes por perfil de usuário.
+CRM de leads imobiliários chamado **LeadRouter** (antes "Lead Flow Pro"; repositório `lead-router`). Gerencia o fluxo de clientes interessados em imóveis, do primeiro contato até a venda, com dashboards diferentes por perfil de usuário.
 
 ## Stack tecnológica
 
@@ -125,6 +125,7 @@ Definidos em `src/components/shared.tsx` → `StatusBadge`. Mesmas cores usadas 
 - `login()` recebe `nome` explícito para garantir que `corretorNome === user.nome` funcione na filtragem de leads
 - Banco começa vazio — sem seeds. Primeiro usuário deve ser criado via console do navegador (ver abaixo)
 - Dados são perdidos se o localStorage for limpo
+- As chaves do localStorage mantêm o prefixo `leadflow_` do nome antigo **de propósito**: renomeá-las apagaria os dados de quem já usa o app
 - Tema (dark/light) é persistido em `leadflow_theme` no localStorage; toggle fica no header do layout
 
 ### Criando o primeiro usuário (gestor)
