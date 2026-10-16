@@ -10,7 +10,28 @@
       "Bash(bun install *)",
       "Bash(bun run *)",
       "Bash(timeout 8 type \"C:\\\\Users\\\\LUCASM~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-lucasmendes-OneDrive---VCA-Construtora-Documentos-Projetos-lead-flow-pro-main\\\\d39dc115-2d66-44a1-a3b1-23eb71030a96\\\\tasks\\\\bf09goy6n.output\")",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(bunx wrangler *)",
+      "Bash(Remove-Item *)",
+      "Bash(curl -s -o /dev/null -w \"status=%{http_code} time=%{time_total}s size=%{size_download}\\\\n\" https://tanstack-start-app.lucas-mendes-044.workers.dev/app)",
+      "Bash(curl -s https://tanstack-start-app.lucas-mendes-044.workers.dev/login)",
+      "Bash(npx tsc *)",
+      "Bash(bun --version)",
+      "Bash(bun x *)",
+      "Bash(gh --version)",
+      "Bash(echo \"typecheck exit: $?\")",
+      "Bash(node -p \"require\\('./node_modules/wrangler/package.json'\\).version\")",
+      "Bash(node -p \"JSON.stringify\\(require\\('./node_modules/@cloudflare/vite-plugin/package.json'\\).peerDependencies||{}\\)\")",
+      "Bash(bun remove *)",
+      "Bash(bun add *)",
+      "Bash(node -p \"require\\('./node_modules/esbuild/package.json'\\).version\")",
+      "Bash(node -p \"require\\('./node_modules/wrangler/node_modules/esbuild/package.json'\\).version\")",
+      "Bash(bun pm *)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(node -p \"require\\('./node_modules/prettier/package.json'\\).version\")",
+      "Bash(node -p \"require\\('./node_modules/eslint/package.json'\\).version\")",
+      "Bash(echo \"autocrlf=$\\(git config core.autocrlf\\)\")",
+      "Bash(node -p \"require\\('./node_modules/react/package.json'\\).version\")"
     ]
   }
 }
